@@ -9,6 +9,8 @@
    
 // kIOFBSetTransform comes from <IOKit/graphics/IOGraphicsTypesPrivate.h>
 // in the source for the IOGraphics family
+
+
 enum {
     kIOFBSetTransform = 0x00000400,
 };
@@ -17,15 +19,16 @@ void
 usage(void)
 {
     fprintf(stderr, "usage: %s -l\n"
+                    "       %s -i\n"
                     "       %s -d <display ID> -r <0|90|180|270>\n",
-                    PROGNAME, PROGNAME);
+                    PROGNAME, PROGNAME, PROGNAME);
     exit(1);
 }
    
 void
 listDisplays(void)
 {
-    CGDisplayErr      dErr;
+   CGDisplayErr      dErr;
     CGDisplayCount    displayCount, i;
     CGDirectDisplayID mainDisplay;
     CGDisplayCount    maxDisplays = MAX_DISPLAYS;
@@ -50,6 +53,50 @@ listDisplays(void)
     exit(0);
 }
    
+void
+infoDisplays(void)
+{
+    CGDisplayErr      dErr;
+    CGDisplayCount    displayCount, i;
+    CGDirectDisplayID mainDisplay;
+    CGDisplayCount    maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
+    
+    CGEventRef ourEvent = CGEventCreate(NULL);
+    CGPoint ourLoc = CGEventGetLocation(ourEvent);
+    
+    CFRelease(ourEvent);
+    
+    mainDisplay = CGMainDisplayID();
+   
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+   
+    printf("#  Display_ID  Resolution  ____Display_Bounds____  Rotation\n");
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+        printf("%-2d %10p  %4lux%-4lu  %5.0f %5.0f %5.0f %5.0f    %3.0f    %s%s%s", 
+               CGDisplayUnitNumber (dID), dID,
+               CGDisplayPixelsWide(dID), CGDisplayPixelsHigh(dID),
+               CGRectGetMinX (CGDisplayBounds (dID)),
+               CGRectGetMinY (CGDisplayBounds (dID)),
+               CGRectGetMaxX (CGDisplayBounds (dID)),
+               CGRectGetMaxY (CGDisplayBounds (dID)),           
+               CGDisplayRotation (dID),
+               (CGDisplayIsActive (dID)) ? "" : "[inactive]",
+               (dID == mainDisplay) ? "[main]" : "",
+               (CGDisplayIsBuiltin (dID)) ? "[internal]\n" : "\n");
+    }
+    
+    printf("Mouse Cursor Position:  ( %5.0f , %5.0f )\n",
+               (float)ourLoc.x, (float)ourLoc.y);
+   
+    exit(0);
+}
+
 IOOptionBits
 angle2options(long angle)
 {
@@ -77,7 +124,7 @@ main(int argc, char **argv)
     CGDirectDisplayID targetDisplay = 0;
     IOOptionBits      options;
    
-    while ((i = getopt(argc, argv, "d:lr:")) != -1) {
+    while ((i = getopt(argc, argv, "d:lir:")) != -1) {
         switch (i) {
         case 'd':
             targetDisplay = (CGDirectDisplayID)strtol(optarg, NULL, 16);
@@ -86,6 +133,9 @@ main(int argc, char **argv)
             break;
         case 'l':
             listDisplays();
+            break;
+        case 'i':
+            infoDisplays();
             break;
         case 'r':
             angle = strtol(optarg, NULL, 10);
