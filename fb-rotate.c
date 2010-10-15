@@ -1,4 +1,7 @@
 // fb-rotate.c
+//
+// Compile with: 
+// gcc -Wall -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
    
 #include <getopt.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
@@ -20,8 +23,9 @@ usage(void)
 {
     fprintf(stderr, "usage: %s -l\n"
                     "       %s -i\n"
+                    "       %s -d <display ID> -m\n"
                     "       %s -d <display ID> -r <0|90|180|270>\n",
-                    PROGNAME, PROGNAME, PROGNAME);
+                    PROGNAME, PROGNAME, PROGNAME, PROGNAME);
     exit(1);
 }
    
@@ -97,6 +101,58 @@ infoDisplays(void)
     exit(0);
 }
 
+void
+setMainDisplay(CGDirectDisplayID targetDisplay)
+{
+    int				   deltaX, deltaY, flag;
+    CGDisplayErr       dErr;
+    CGDisplayCount     displayCount, i;
+    CGDirectDisplayID mainDisplay;
+    CGDisplayCount     maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID  onlineDisplays[MAX_DISPLAYS]; 
+	CGDisplayConfigRef config;
+
+	mainDisplay = CGMainDisplayID();
+	
+	if (mainDisplay == targetDisplay) {
+	exit(0);
+	}
+	
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+	
+	flag = 0;
+    for (i = 0; i < displayCount; i++) {
+    	CGDirectDisplayID dID = onlineDisplays[i];
+			if (dID == targetDisplay) { flag = 1; }
+	}	
+	if (flag == 0) {
+        fprintf(stderr, "No such display ID: %10p.\n", targetDisplay);
+        exit(1);
+    }
+
+	deltaX = -CGRectGetMinX (CGDisplayBounds (targetDisplay));
+    deltaY = -CGRectGetMinY (CGDisplayBounds (targetDisplay));
+
+    CGBeginDisplayConfiguration (&config);
+    
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+    
+    CGConfigureDisplayOrigin (config, dID,
+    	CGRectGetMinX (CGDisplayBounds (dID)) + deltaX,
+    	CGRectGetMinY (CGDisplayBounds (dID)) + deltaY );
+	}
+
+    CGCompleteDisplayConfiguration (config, kCGConfigureForSession);
+   
+   
+    exit(0);
+}
+
 IOOptionBits
 angle2options(long angle)
 {
@@ -124,7 +180,7 @@ main(int argc, char **argv)
     CGDirectDisplayID targetDisplay = 0;
     IOOptionBits      options;
    
-    while ((i = getopt(argc, argv, "d:lir:")) != -1) {
+    while ((i = getopt(argc, argv, "d:limr:")) != -1) {
         switch (i) {
         case 'd':
             targetDisplay = (CGDirectDisplayID)strtol(optarg, NULL, 16);
@@ -136,6 +192,9 @@ main(int argc, char **argv)
             break;
         case 'i':
             infoDisplays();
+            break;
+        case 'm':
+            setMainDisplay(targetDisplay);
             break;
         case 'r':
             angle = strtol(optarg, NULL, 10);

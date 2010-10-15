@@ -2,7 +2,7 @@
 Display Rotation for the Mac: fb-rotate
 =======================================
 
-A Unix utility capable of rotating the display on any Mac, including the internal display on Apple notebooks.
+A Unix utility able to rotate the display on any Mac, including the internal display on Apple notebooks, and able to switch the primary display, the one with the menu bar, back and forth between displays.
 
 
 Compiling fb-rotate
@@ -75,6 +75,27 @@ will rotate the display with the indicated ID back to the standard orientation, 
 (Again, you can also rotate to the 90, 180 and 270 degree orientations.)
 
 
+Finally,
+
+     fb-rotate -d <display ID> -m
+
+will set the display with the indicated ID to be the primary (main) display that has the menu bar, e.g.
+
+     $ ./fb-rotate -d 0x76405c2d -m
+     $ ./fb-rotate -i
+     #  Display_ID  Resolution  ____Display_Bounds____  Rotation
+     1  0x76405c2d  1344x1008      0     0  1344  1008      0    [main]
+     0  0x19156030  1280x800   -1280     0     0   800      0    [internal]
+     Mouse Cursor Position:  (  1122 ,   438 )
+
+
+
+Downloads
+---------
+
+[A binary version of fb-rotate][fb-rotate] is available at Modbookish, a forum focused on the [Axiotron Modbook][Modbook].
+
+
 Caveats
 -------
 
@@ -91,3 +112,5 @@ Changes were made by [Eric Nitardy][ericn] (© 2010) which have to be made avail
 
 [osxbook]: http://osxbook.com
 [ericn]: http://modbookish.lefora.com/members/ericn/
+[fb-rotate]: http://modbookish.lefora.com/2010/06/29/a-unix-utility-to-change-the-primary-display-on-os/
+[Modbook]: http://www.axiotron.com/index.php?id=modbook
