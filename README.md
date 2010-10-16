@@ -100,13 +100,6 @@ Downloads
 [A binary version of fb-rotate][fb-rotate] is available at Modbookish, a forum focused on the [Axiotron Modbook][Modbook].
 
 
-
-Downloads
----------
-
-[A binary version of fb-rotate][fb-rotate] is available at Modbookish, a forum focused on the [Axiotron Modbook][Modbook].
-
-
 Caveats
 -------
 
