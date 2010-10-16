@@ -100,20 +100,6 @@ Downloads
 [A binary version of fb-rotate][fb-rotate] is available at Modbookish, a forum focused on the [Axiotron Modbook][Modbook].
 
 
-Finally,
-
-     fb-rotate -d <display ID> -m
-
-will set the display with the indicated ID to be the primary (main) display that has the menu bar, e.g.
-
-     $ ./fb-rotate -d 0x76405c2d -m
-     $ ./fb-rotate -i
-     #  Display_ID  Resolution  ____Display_Bounds____  Rotation
-     1  0x76405c2d  1344x1008      0     0  1344  1008      0    [main]
-     0  0x19156030  1280x800   -1280     0     0   800      0    [internal]
-     Mouse Cursor Position:  (  1122 ,   438 )
-
-
 
 Downloads
 ---------
