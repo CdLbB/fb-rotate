@@ -23,6 +23,9 @@ will compile the utility.
 
 Use of fb-rotate
 ----------------
+----------------
+
+The l-option (list):
 
      fb-rotate -l
 
@@ -33,6 +36,8 @@ will list the display id's, e.g. in Terminal,
      0x19156030       1280x800                  [main display]
      0x76405c2d       1344x1008 
 
+
+The i-option (info):
 
      fb-rotate -i
 
@@ -47,6 +52,8 @@ will list the display id's with other information, e.g.
 (Unlike the file: `com.apple.windowserver.plist`, fb-rotate's information is always accurate and current.)
 
 
+The d (display) and r (rotate) options :
+
      fb-rotate -d 0 -r 180
 
 will rotate the main display 180 degrees, e.g.
@@ -60,6 +67,7 @@ will rotate the main display 180 degrees, e.g.
 
 (You can rotate to the 0, 90 and 270 degree orientations as well.)
 
+Also,
 
      fb-rotate -d <display ID> -r 0
 
