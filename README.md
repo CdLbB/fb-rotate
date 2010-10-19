@@ -24,6 +24,8 @@ will compile the utility.
 Use of fb-rotate
 ----------------
 
+The l-option (list):
+
      fb-rotate -l
 
 will list the display id's, e.g.
@@ -33,6 +35,7 @@ will list the display id's, e.g.
      0x19156030       1280x800                  [main display]
      0x76405c2d       1344x1008 
 
+The d (display) and r (rotate) options :
 
      fb-rotate -d 0 -r 180
 
@@ -42,6 +45,7 @@ will rotate the main display 180 degrees, e.g. in Terminal,
 
 (You can rotate to the 0, 90 and 270 degree orientations as well.)
 
+Also,
 
      fb-rotate -d <display ID> -r 0
 
