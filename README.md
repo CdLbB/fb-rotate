@@ -16,7 +16,7 @@ In the Terminal app, after you've changed the current directory to the one `fb-r
 
 then,
 
-     gcc -Wall -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
+     gcc -w -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
 
 will compile the utility.
 
