@@ -24,7 +24,10 @@ usage(void)
     fprintf(stderr, "usage: %s -l\n"
                     "       %s -i\n"
                     "       %s -d <display ID> -m\n"
-                    "       %s -d <display ID> -r <0|90|180|270>\n",
+                    "       %s -d <display ID> -r <0|90|180|270>\n"
+	            "\n"
+	            "-d 0 can be used for the <display ID> of the main monitor\n"
+	            "-d 1 can be used for the <display ID> of the first non-main monitor\n",
                     PROGNAME, PROGNAME, PROGNAME, PROGNAME);
     exit(1);
 }
@@ -153,6 +156,29 @@ setMainDisplay(CGDirectDisplayID targetDisplay)
     exit(0);
 }
 
+CGDirectDisplayID
+nonMainID(void) {
+   // returns the ID of the first active monitor that is not main or 0 if only one monitor;
+    CGDisplayErr      dErr;
+    CGDisplayCount    displayCount, i;
+    CGDisplayCount    maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
+    CGDirectDisplayID mainID = CGMainDisplayID();
+    CGDirectDisplayID fallbackID = 0;
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+	if ((dID != mainID) && (CGDisplayIsActive (dID))) {
+	  return dID;
+	}
+    }
+    return fallbackID;
+}
+
 IOOptionBits
 angle2options(long angle)
 {
@@ -183,10 +209,17 @@ main(int argc, char **argv)
     while ((i = getopt(argc, argv, "d:limr:")) != -1) {
         switch (i) {
         case 'd':
-            targetDisplay = (CGDirectDisplayID)strtol(optarg, NULL, 16);
-            if (targetDisplay == 0)
-                targetDisplay = CGMainDisplayID();
-            break;
+	  targetDisplay = (CGDirectDisplayID)strtoul(optarg, NULL, 16);
+          if (targetDisplay == 0)
+              targetDisplay = CGMainDisplayID();
+	  if (targetDisplay == 1) {
+              targetDisplay = nonMainID();
+              if (targetDisplay == 0) {
+                  fprintf(stderr, "Could not find a non-main monitor.\n");
+                  exit(1);
+	      }
+	  }
+          break;
         case 'l':
             listDisplays();
             break;
