@@ -27,7 +27,7 @@ usage(void)
                     "       %s -d <display ID> -r <0|90|180|270>\n"
 	            "\n"
 	            "-d 0 can be used for the <display ID> of the main monitor\n"
-	            "-d 1 can be used for the <display ID> of the first non-main monitor\n",
+	            "-d 1 can be used for the <display ID> of the first non-internal monitor\n",
                     PROGNAME, PROGNAME, PROGNAME, PROGNAME);
     exit(1);
 }
@@ -157,13 +157,12 @@ setMainDisplay(CGDirectDisplayID targetDisplay)
 }
 
 CGDirectDisplayID
-nonMainID(void) {
-   // returns the ID of the first active monitor that is not main or 0 if only one monitor;
+nonInternalID(void) {
+   // returns the ID of the first active monitor that is not internal or 0 if only one monitor;
     CGDisplayErr      dErr;
     CGDisplayCount    displayCount, i;
     CGDisplayCount    maxDisplays = MAX_DISPLAYS;
     CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
-    CGDirectDisplayID mainID = CGMainDisplayID();
     CGDirectDisplayID fallbackID = 0;
     dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
     if (dErr != kCGErrorSuccess) {
@@ -172,7 +171,7 @@ nonMainID(void) {
     }
     for (i = 0; i < displayCount; i++) {
         CGDirectDisplayID dID = onlineDisplays[i];
-	if ((dID != mainID) && (CGDisplayIsActive (dID))) {
+	if (!(CGDisplayIsBuiltin (dID)) && (CGDisplayIsActive (dID))) {
 	  return dID;
 	}
     }
@@ -213,9 +212,9 @@ main(int argc, char **argv)
           if (targetDisplay == 0)
               targetDisplay = CGMainDisplayID();
 	  if (targetDisplay == 1) {
-              targetDisplay = nonMainID();
+              targetDisplay = nonInternalID();
               if (targetDisplay == 0) {
-                  fprintf(stderr, "Could not find a non-main monitor.\n");
+                  fprintf(stderr, "Could not find an active monitor besides the internal one.\n");
                   exit(1);
 	      }
 	  }
