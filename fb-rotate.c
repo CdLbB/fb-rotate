@@ -1,7 +1,7 @@
 // fb-rotate.c
 //
 // Compile with: 
-// gcc -Wall -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
+// gcc -w -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
    
 #include <getopt.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
@@ -26,7 +26,11 @@ usage(void)
                     "       %s -d <display ID> -m\n"
                     "       %s -d <display ID> -r <0|90|180|270|1>\n"
 	            "\n"
-	            "-r 1 signfies 90 if currently not rotated; otherwise 0 (i.e. toggle)\n",
+	            "-r 1 signfies 90 if currently not rotated; otherwise 0 (i.e. toggle)\n"
+	            "\n"
+	            "-d -1 can be used for the <display ID> of the internal monitor\n"
+	            "-d 0  can be used for the <display ID> of the main monitor\n"
+	            "-d 1  can be used for the <display ID> of the first non-internal monitor\n",
                     PROGNAME, PROGNAME, PROGNAME, PROGNAME);
     exit(1);
 }
@@ -157,6 +161,53 @@ setMainDisplay(CGDirectDisplayID targetDisplay)
 
 
 CGDirectDisplayID
+InternalID(void) {
+   // returns the ID of the internal monitor;
+    CGDisplayErr      dErr;
+    CGDisplayCount    displayCount, i;
+    CGDisplayCount    maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
+    CGDirectDisplayID fallbackID = 0;
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+	if ((CGDisplayIsBuiltin (dID))) {
+	  return dID;
+	}
+    }
+    return fallbackID;
+}
+
+
+CGDirectDisplayID
+nonInternalID(void) {
+   // returns the ID of the first active monitor that is not internal or 0 if only one monitor;
+    CGDisplayErr      dErr;
+    CGDisplayCount    displayCount, i;
+    CGDisplayCount    maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
+    CGDirectDisplayID fallbackID = 0;
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+	if (!(CGDisplayIsBuiltin (dID)) && (CGDisplayIsActive (dID))) {
+	  return dID;
+	}
+    }
+    return fallbackID;
+}
+
+
+
+CGDirectDisplayID
 cgIDfromU32(uint32_t preId)
 {
     CGDisplayErr      dErr;
@@ -213,8 +264,17 @@ main(int argc, char **argv)
         switch (i) {
         case 'd':
             targetDisplay = (CGDirectDisplayID)strtoul(optarg, NULL, 16);
+            if (targetDisplay == -1)
+                targetDisplay = InternalID();
             if (targetDisplay == 0)
                 targetDisplay = CGMainDisplayID();
+            if (targetDisplay == 1) {
+                targetDisplay = nonInternalID();
+                if (targetDisplay == 0) {
+                  fprintf(stderr, "Could not find an active monitor besides the internal one.\n");
+                  exit(1);
+		      }
+            }
             break;
         case 'l':
             listDisplays();
