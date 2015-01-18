@@ -79,6 +79,19 @@ will rotate the display with the indicated ID back to the standard orientation, 
 
 (Again, you can also rotate to the 90, 180 and 270 degree orientations.)
 
+Further, there are shortcuts: 
+
+When using the `-d` option,
+
+- `-1` is a short cut for the `<display ID>` of the internal monitor,
+- `0`  is a short cut for the `<display ID>` of the main monitor,
+- `1`  is a short cut for the `<display ID>` of the first non-internal monitor.
+
+When using the `-r` option,
+
+- `-r 1` toggles between the 0 and 90 degree orientations.
+
+
 Finally, the m-option (main):
 
      fb-rotate -d <display ID> -m
@@ -115,6 +128,8 @@ the book **Mac OS X Internals: A Systems Approach** by Amit Singh (© 2006). The
 Changes were made by [Eric Nitardy][ericn] (© 2010) which have to be made available under the same license.
 
 [osxbook]: http://osxbook.com
-[ericn]: http://modbookish.lefora.com/members/ericn/
-[fb-rotate]: http://modbookish.lefora.com/2010/06/29/a-unix-utility-to-change-the-primary-display-on-os/
-[Modbook]: http://www.axiotron.com/index.php?id=modbook
+[ericn]: http://cdlbb.github.com
+[fb-rotate]: http://modbookish.lefora.com/topic/3513246/A-Unix-Utility-to-Change-the-Primary-Display-on-OSX/
+[Modbook]: http://www.modbook.com
+
+
