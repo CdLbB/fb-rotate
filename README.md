@@ -16,7 +16,7 @@ In the Terminal app, after you've changed the current directory to the one `fb-r
 
 then,
 
-     gcc -Wall -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
+     gcc -w -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
 
 will compile the utility.
 
@@ -83,6 +83,12 @@ will rotate the display with the indicated ID back to the standard orientation, 
 (Again, you can also rotate to the 90, 180 and 270 degree orientations.)
 
 
+Downloads
+---------
+
+[A binary version of fb-rotate][fb-rotate] is available at Modbookish, a forum focused on the [Axiotron Modbook][Modbook].
+
+
 Caveats
 -------
 
@@ -98,4 +104,6 @@ the book **Mac OS X Internals: A Systems Approach** by Amit Singh (© 2006). The
 Changes were made by [Eric Nitardy][ericn] (© 2010) which have to be made available under the same license.
 
 [osxbook]: http://osxbook.com
-[ericn]: http://modbookish.lefora.com/members/ericn/
+[ericn]: http://cdlbb.github.com
+[fb-rotate]: http://modbookish.lefora.com/topic/3513246/A-Unix-Utility-to-Change-the-Primary-Display-on-OSX/
+[Modbook]: http://www.modbook.com
