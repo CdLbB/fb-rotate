@@ -1,4 +1,7 @@
 // fb-rotate.c
+//
+// Compile with: 
+// gcc -w -o fb-rotate fb-rotate.c -framework IOKit -framework ApplicationServices
    
 #include <getopt.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
@@ -45,7 +48,7 @@ listDisplays(void)
     printf("Display ID       Resolution\n");
     for (i = 0; i < displayCount; i++) {
         CGDirectDisplayID dID = onlineDisplays[i];
-        printf("%-16p %lux%lu %32s", dID,
+        printf("0x%-14x %lux%lu %32s", dID,
                CGDisplayPixelsWide(dID), CGDisplayPixelsHigh(dID),
                (dID == mainDisplay) ? "[main display]\n" : "\n");
     }
@@ -75,10 +78,10 @@ infoDisplays(void)
         exit(1);
     }
    
-    printf("#  Display_ID  Resolution  ____Display_Bounds____  Rotation\n");
+    printf("#  Display_ID    Resolution  ____Display_Bounds____  Rotation\n");
     for (i = 0; i < displayCount; i++) {
         CGDirectDisplayID dID = onlineDisplays[i];
-        printf("%-2d %10p  %4lux%-4lu  %5.0f %5.0f %5.0f %5.0f    %3.0f    %s%s%s", 
+        printf("%-2d 0x%-10x  %4lux%-4lu  %5.0f %5.0f %5.0f %5.0f    %3.0f    %s%s%s",
                CGDisplayUnitNumber (dID), dID,
                CGDisplayPixelsWide(dID), CGDisplayPixelsHigh(dID),
                CGRectGetMinX (CGDisplayBounds (dID)),
@@ -96,6 +99,33 @@ infoDisplays(void)
    
     exit(0);
 }
+
+
+CGDirectDisplayID
+cgIDfromU32(uint32_t preId)
+{
+    CGDisplayErr      dErr;
+    CGDisplayCount    displayCount, i;
+    CGDisplayCount    maxDisplays = MAX_DISPLAYS;
+    CGDirectDisplayID onlineDisplays[MAX_DISPLAYS];
+    CGDirectDisplayID postId = preId;
+    
+    dErr = CGGetOnlineDisplayList(maxDisplays, onlineDisplays, &displayCount);
+    if (dErr != kCGErrorSuccess) {
+        fprintf(stderr, "CGGetOnlineDisplayList: error %d.\n", dErr);
+        exit(1);
+    }
+    for (i = 0; i < displayCount; i++) {
+        CGDirectDisplayID dID = onlineDisplays[i];
+        if ((dID == preId) || (dID == postId) ||
+            (onlineDisplays[i] == preId) || (onlineDisplays[i] == postId)) {
+            return dID;
+        }
+    }
+    fprintf(stderr, " Could not find a matching id in onlineDisplays!\n");
+    exit(1);
+}
+
 
 IOOptionBits
 angle2options(long angle)
@@ -127,7 +157,7 @@ main(int argc, char **argv)
     while ((i = getopt(argc, argv, "d:lir:")) != -1) {
         switch (i) {
         case 'd':
-            targetDisplay = (CGDirectDisplayID)strtol(optarg, NULL, 16);
+            targetDisplay = (CGDirectDisplayID)strtoul(optarg, NULL, 16);
             if (targetDisplay == 0)
                 targetDisplay = CGMainDisplayID();
             break;
@@ -152,7 +182,12 @@ main(int argc, char **argv)
    
     // Get the I/O Kit service port of the target display
     // Since the port is owned by the graphics system, we should not destroy it
-    service = CGDisplayIOServicePort(targetDisplay);
+
+    // in Yosemite it seems important to have a call to CGGetOnlineDisplayList() before calling
+    // CGDisplayIOServicePort() or the later replacements CGDisplayVendorNumber() etc.
+    // otherwise this program can hang.
+    CGDirectDisplayID td2 = cgIDfromU32(targetDisplay);
+    service = CGDisplayIOServicePort(td2);
    
     // We will get an error if the target display doesn't support the
     // kIOFBSetTransform option for IOServiceRequestProbe()
