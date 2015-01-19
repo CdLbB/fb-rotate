@@ -103,7 +103,7 @@ Downloads
 Caveats
 -------
 
-Warning: Some white MacBooks, namely those using Intel's integrated graphics, have difficulty rotating to the 90º or 270º orientations and the resulting display may be difficult to use. 
+Warning: Some white MacBooks (2006-2008), namely those using Intel's integrated graphics, have difficulty rotating to the 90º or 270º orientations and the resulting display may be difficult to use. 
 
 
 Credits and License 
