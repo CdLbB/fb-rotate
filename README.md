@@ -4,6 +4,19 @@ Display Rotation for the Mac: fb-rotate
 
 A Unix utility able to rotate the display on any Mac, including the internal display on Apple notebooks, and able to switch the primary display, the one with the menu bar, back and forth between displays.
 
+WARNING!
+========
+
+On Recent Macbooks running Sierra and El Capitan:
+
+After a 90 or 270 degree rotation, the dislay fails, the computer and applications are still running, keyboard works, but the display is black. After a reset and restart, the screen is turned and fb-rotate continues to work for everything (including the -i and -l options in my tests), but the 90 and 270 rotations again cause the display to fail.
+
+The 180 degree rotation works fine.
+
+This utility depends on a private Apple API. We have had a ten year run. It was bound to stop working eventually. I will keep playing, but I'm not hopeful.
+
+WARNING!
+========
 
 Compiling fb-rotate
 -------------------
