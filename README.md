@@ -103,6 +103,7 @@ When using the `-d` option,
 When using the `-r` option,
 
 - `-r 1` toggles between the 0 and 90 degree orientations.
+- `-r -1` toggles between the 0 and 180 degree orientations.
 
 
 Finally, the m-option (main):

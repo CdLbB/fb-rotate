@@ -24,9 +24,10 @@ usage(void)
     fprintf(stderr, "usage: %s -l\n"
                     "       %s -i\n"
                     "       %s -d <display ID> -m\n"
-                    "       %s -d <display ID> -r <0|90|180|270|1>\n"
+                    "       %s -d <display ID> -r <0|90|180|270|1|-1>\n"
 	            "\n"
 	            "-r 1 signfies 90 if currently not rotated; otherwise 0 (i.e. toggle)\n"
+	            "-r -1 signfies 180 if currently not rotated; otherwise 0 (i.e. toggle)\n"
 	            "\n"
 	            "-d -1 can be used for the <display ID> of the internal monitor\n"
 	            "-d 0  can be used for the <display ID> of the main monitor\n"
@@ -300,6 +301,14 @@ main(int argc, char **argv)
         currentRotation = CGDisplayRotation (targetDisplay);
         if (currentRotation == 0) {
 	  angle = 90;
+	} else {
+          angle = 0;
+	}
+    }
+    if (angle == -1) {
+        currentRotation = CGDisplayRotation (targetDisplay);
+        if (currentRotation == 0) {
+	  angle = 180;
 	} else {
           angle = 0;
 	}
