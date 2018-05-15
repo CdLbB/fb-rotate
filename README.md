@@ -9,7 +9,7 @@ WARNING!
 
 On Recent Macbooks running Sierra and El Capitan:
 
-After a 90 or 270 degree rotation, the dislay fails, the computer and applications are still running, keyboard works, but the display is black. After a reset and restart, the screen is turned and fb-rotate continues to work for everything (including the -i and -l options in my tests), but the 90 and 270 rotations again cause the display to fail.
+After a 90 or 270 degree rotation, the display fails, the computer and applications are still running, keyboard works, but the display is black. After a reset and restart, the screen is turned and fb-rotate continues to work for everything (including the -i and -l options in my tests), but the 90 and 270 rotations again cause the display to fail.
 
 The 180 degree rotation works fine.
 
@@ -21,7 +21,7 @@ WARNING!
 Compiling fb-rotate
 -------------------
 
-Assuming you have Xcode installed, you can compile the C-code yourself on any Mac OS from 10.3 to 10.11. 
+Assuming you have Xcode installed, you can compile the C-code yourself on any Mac OS from 10.3 to 10.11.
 
 In the Terminal app, after you've changed the current directory to the one `fb-rotate.c` is stored, using
 
@@ -42,11 +42,11 @@ The l-option (list):
      fb-rotate -l
 
 will list the display id's, e.g. in Terminal,
- 
+
      $ ./fb-rotate -l
      Display ID       Resolution
      0x19156030       1280x800                  [main display]
-     0x76405c2d       1344x1008 
+     0x76405c2d       1344x1008
 
 The i-option (info):
 
@@ -92,7 +92,7 @@ will rotate the display with the indicated ID back to the standard orientation, 
 
 (Again, you can also rotate to the 90, 180 and 270 degree orientations.)
 
-Further, there are shortcuts: 
+Further, there are shortcuts:
 
 When using the `-d` option,
 
@@ -129,10 +129,10 @@ Downloads
 Caveats
 -------
 
-Warning: Some white MacBooks (2006-2008), namely those using Intel's integrated graphics, have difficulty rotating to the 90º or 270º orientations and the resulting display may be difficult to use. 
+Warning: Some white MacBooks (2006-2008), namely those using Intel's integrated graphics, have difficulty rotating to the 90º or 270º orientations and the resulting display may be difficult to use.
 
 
-Credits and License 
+Credits and License
 -------------------
 
 The original code for fb-rotate comes from a programming example in
@@ -144,5 +144,3 @@ Changes were made by [Eric Nitardy][ericn] (© 2010) which have to be made avail
 [ericn]: http://cdlbb.github.com
 [fb-rotate]: http://modbookish.lefora.com/topic/3513246/A-Unix-Utility-to-Change-the-Primary-Display-on-OSX/
 [Modbook]: http://www.modbook.com
-
-
